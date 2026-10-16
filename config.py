@@ -1,9 +1,13 @@
 import os
 
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
 
+SESSION_COOKIE_SAMESITE = "Lax"
+REMEMBER_COOKIE_DURATION = timedelta(days=7)
+REMEMBER_COOKIE_SAMESITE = "Lax"
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -14,3 +18,4 @@ class TestConfig(Config):
     TESTING = True
     SECRET_KEY = "chave-de-teste"
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    WTF_CSRF_ENABLED = False

@@ -1,0 +1,28 @@
+{% extends "painel/base.html" %}
+
+{% block titulo %}Entrar{% endblock %}
+
+{% block conteudo %}
+<section class="cartao cartao-login">
+  <h1>Entrar no painel</h1>
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+
+    <label for="{{ form.email.id }}">{{ form.email.label.text }}</label>
+    {{ form.email(autocomplete="username", autofocus=true) }}
+    {% for erro in form.email.errors %}
+      <p class="erro-campo">{{ erro }}</p>
+    {% endfor %}
+
+    <label for="{{ form.senha.id }}">{{ form.senha.label.text }}</label>
+    {{ form.senha(autocomplete="current-password") }}
+    {% for erro in form.senha.errors %}
+      <p class="erro-campo">{{ erro }}</p>
+    {% endfor %}
+
+    <label class="lembrar">{{ form.lembrar() }} {{ form.lembrar.label.text }}</label>
+
+    {{ form.enviar(class="botao") }}
+  </form>
+</section>
+{% endblock %}

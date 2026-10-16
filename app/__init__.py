@@ -1,6 +1,6 @@
 from flask import Flask
 
-from app.extensions import db, login_manager, migrate
+from app.extensions import csrf, db, login_manager, migrate
 from config import Config
 
 def create_app(config_class=Config):
@@ -19,6 +19,12 @@ def create_app(config_class=Config):
     from app.comandos import registrar_comandos
 
     registrar_comandos(app)
+
+    from app.painel import bp as painel_bp
+
+    app.register_blueprint(painel_bp)
+    
+    csrf.init_app(app)
 
     @app.get("/saude")
     def saude():

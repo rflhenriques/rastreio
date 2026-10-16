@@ -7,7 +7,7 @@ from sqlalchemy import DateTime, Enum, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app.extensions import db
+from app.extensions import db, login_manager
 
 
 class TipoEnvio(enum.Enum):
@@ -50,6 +50,10 @@ class Usuario(UserMixin, db.Model):
 
     def verificar_senha(self, senha):
         return check_password_hash(self.senha_hash, senha)
+
+    @login_manager.user_loader
+    def carregar_usuario(user_id):
+        return db.session.get(Usuario, int(user_id))
 
 ROTULOS_STATUS = {
     Status.EM_PREPARACAO: "Em preparação",
