@@ -14,6 +14,8 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
+    from app import models
+
     @app.get("/saude")
     def saude():
         return {"status": "ok"}
