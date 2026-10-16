@@ -320,3 +320,25 @@ textarea:focus {
 .historico small {
     color: var(--cor-texto-suave);
 }
+
+/* Ações do pedido */
+
+.acao {
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.acao:last-child {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom: 0;
+}
+
+.acao label {
+    margin-top: 0;
+}
+
+input[name="codigo"] {
+    text-transform: uppercase;
+}

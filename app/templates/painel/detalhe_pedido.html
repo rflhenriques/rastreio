@@ -1,4 +1,5 @@
 {% extends "painel/base.html" %}
+{% from "painel/_campos.html" import campo %}
 
 {% block titulo %}{{ pedido.nome_cliente }}{% endblock %}
 
@@ -19,6 +20,44 @@
     <dt>Criado em</dt>
     <dd>{{ pedido.criado_em|data_br }}</dd>
   </dl>
+</section>
+
+<section class="cartao">
+  <h2>Ações</h2>
+
+  {% if pedido.entregue %}
+    <p class="vazio">Pedido entregue. Não há ações pendentes.</p>
+  {% else %}
+
+    {% if proxima_etapa %}
+    <form method="post" class="acao"
+          action="{{ url_for('painel.avancar_pedido', pedido_id=pedido.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="etapa_atual" value="{{ pedido.status.name }}">
+      <button type="submit" class="botao botao-inline">Avançar para: {{ proxima_etapa }}</button>
+    </form>
+    {% endif %}
+
+    {% if not pedido.tem_eventos_correios %}
+    <form method="post" class="acao" novalidate
+          action="{{ url_for('painel.cadastrar_codigo_pedido', pedido_id=pedido.id) }}">
+      {{ form_codigo.hidden_tag() }}
+      {{ campo(form_codigo.codigo, placeholder="AA123456789BR", maxlength=13, autocomplete="off") }}
+      <div class="acoes">
+        {{ form_codigo.enviar(class="botao botao-inline") }}
+      </div>
+    </form>
+    {% endif %}
+
+    {% if pedido.codigo_rastreio %}
+    <form method="post" class="acao"
+          action="{{ url_for('painel.consultar_pedido', pedido_id=pedido.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="botao-secundario">Consultar Correios agora</button>
+    </form>
+    {% endif %}
+
+  {% endif %}
 </section>
 
 <section class="cartao">

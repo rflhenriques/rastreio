@@ -7,9 +7,10 @@ from wtforms import (
     StringField,
     SubmitField,
 )
-from wtforms.validators import DataRequired, Email, Length
+from wtforms.validators import DataRequired, Email, Length, Regexp
 
 from app.models import ROTULOS_TIPO
+from app.servicos.pedidos import PADRAO_CODIGO
 
 
 class LoginForm(FlaskForm):
@@ -35,3 +36,22 @@ class PedidoForm(FlaskForm):
         choices=[(tipo.name, rotulo) for tipo, rotulo in ROTULOS_TIPO.items()],
     )
     enviar = SubmitField("Criar pedido")
+
+def _normalizar_codigo(valor):
+    return valor.replace(" ", "").upper() if valor else valor
+
+
+class CodigoForm(FlaskForm):
+    codigo = StringField(
+        "Código de rastreio dos Correios",
+        filters=[_normalizar_codigo],
+        validators=[
+            DataRequired("Informe o código."),
+            Regexp(
+                PADRAO_CODIGO,
+                message="Código inválido. Use 2 letras, 9 números e 2 letras "
+                "(exemplo: AA123456789BR).",
+            ),
+        ],
+    )
+    enviar = SubmitField("Salvar código")

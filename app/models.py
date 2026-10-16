@@ -107,6 +107,26 @@ class Pedido(db.Model):
     def rotulo_tipo(self):
         return ROTULOS_TIPO[self.tipo_envio]
 
+    @property
+    def rotulo_status(self):
+        if self.status == Status.RECEBIDO:
+            if self.tipo_envio == TipoEnvio.PECA_NOVA:
+                return "Contrato fechado"
+            return "Pedido recebido"
+        return ROTULOS_STATUS[self.status]
+
+    @property
+    def rotulo_tipo(self):
+        return ROTULOS_TIPO[self.tipo_envio]
+
+    @property
+    def tem_eventos_correios(self):
+        return any(evento.origem == Origem.CORREIOS for evento in self.eventos)
+
+    @property
+    def entregue(self):
+        return self.status == Status.ENTREGUE
+
 class Evento(db.Model):
     __tablename__ = "eventos"
     __table_args__ = (
