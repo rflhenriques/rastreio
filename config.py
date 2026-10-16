@@ -13,6 +13,7 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///rastreio.db")
     PROVEDOR_RASTREIO = os.environ.get("PROVEDOR_RASTREIO", "simulado")
+    URL_BASE_PUBLICA = os.environ.get("URL_BASE_PUBLICA", "http://127.0.0.1:5000")
 
 class TestConfig(Config):
     TESTING = True

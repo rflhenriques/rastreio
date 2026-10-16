@@ -1,8 +1,41 @@
 {% extends "painel/base.html" %}
 
-{% block titulo %}Início{% endblock %}
+{% block titulo %}Pedidos{% endblock %}
 
 {% block conteudo %}
-<h1>Olá, {{ current_user.nome }}</h1>
-<p>O painel está funcionando. Na próxima parte, a lista de pedidos aparece aqui.</p>
+<div class="cabecalho-pagina">
+  <h1>Pedidos</h1>
+  <a class="botao botao-inline" href="{{ url_for('painel.novo_pedido') }}">Novo pedido</a>
+</div>
+
+{% if pedidos %}
+<div class="tabela-rolavel">
+  <table class="tabela">
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Tipo</th>
+        <th>Status</th>
+        <th>Código</th>
+        <th>Criado em</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pedido in pedidos %}
+      <tr>
+        <td>{{ pedido.nome_cliente }}</td>
+        <td>{{ pedido.rotulo_tipo }}</td>
+        <td><span class="selo selo-{{ pedido.status.value }}">{{ pedido.rotulo_status }}</span></td>
+        <td>{{ pedido.codigo_rastreio or "—" }}</td>
+        <td>{{ pedido.criado_em|data_br }}</td>
+        <td><a href="{{ url_for('painel.detalhe_pedido', pedido_id=pedido.id) }}">Abrir</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="vazio">Nenhum pedido ainda. Crie o primeiro em "Novo pedido".</p>
+{% endif %}
 {% endblock %}

@@ -1,0 +1,25 @@
+{% extends "painel/base.html" %}
+{% from "painel/_campos.html" import campo %}
+
+{% block titulo %}Novo pedido{% endblock %}
+
+{% block conteudo %}
+<section class="cartao cartao-form">
+  <h1>Novo pedido</h1>
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+
+    {{ campo(form.nome_cliente, autofocus=true) }}
+    {{ campo(form.tipo_envio) }}
+    <p class="dica">
+      <strong>Peça nova:</strong> envio ao novo cliente, no fechamento do contrato.
+      <strong>Reposição:</strong> envio a um cliente que já tem contrato.
+    </p>
+
+    <div class="acoes">
+      {{ form.enviar(class="botao botao-inline") }}
+      <a class="botao-secundario" href="{{ url_for('painel.inicio') }}">Cancelar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

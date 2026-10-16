@@ -1,8 +1,14 @@
 :root {
-    --cor-primaria: #1f5fbf;
-    --cor-fundo: #f4f6f9;
-    --cor-texto: #1c2430;
-    --cor-borda: #d5dbe3;
+    color-scheme: dark;
+
+    --cor-fundo: #0f1419;
+    --cor-superficie: #1a212b;
+    --cor-borda: #2b3542;
+    --cor-texto: #f2f5f8;
+    --cor-texto-suave: #a9b4c2;
+    --cor-primaria: #2f6fe4;
+    --cor-primaria-hover: #4c8dff;
+    --cor-link: #7fb0ff;
 }
 
 * {
@@ -16,13 +22,38 @@ body {
     color: var(--cor-texto);
 }
 
+a {
+    color: var(--cor-link);
+}
+
+h1,
+h2 {
+    margin: 0 0 1rem;
+}
+
+h2 {
+    font-size: 1.1rem;
+}
+
+/* Topo e menu */
 .topo {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
     padding: 0.75rem 1.25rem;
-    background: #fff;
+    background: var(--cor-superficie);
     border-bottom: 1px solid var(--cor-borda);
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.menu a {
+    text-decoration: none;
 }
 
 .topo form {
@@ -38,11 +69,25 @@ body {
     padding: 0 1rem;
 }
 
+.cabecalho-pagina {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.cabecalho-pagina h1 {
+    margin: 0;
+}
+
+/* Cartões */
 .cartao {
-    background: #fff;
+    background: var(--cor-superficie);
     border: 1px solid var(--cor-borda);
     border-radius: 8px;
     padding: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .cartao-login {
@@ -50,6 +95,11 @@ body {
     margin: 3rem auto;
 }
 
+.cartao-form {
+    max-width: 520px;
+}
+
+/* Formulários */
 label {
     display: block;
     margin: 1rem 0 0.25rem;
@@ -65,21 +115,59 @@ label {
 
 input[type="email"],
 input[type="password"],
-input[type="text"] {
+input[type="text"],
+select,
+textarea {
     width: 100%;
     padding: 0.6rem;
+    background: var(--cor-fundo);
+    color: var(--cor-texto);
     border: 1px solid var(--cor-borda);
     border-radius: 6px;
-    font-size: 1rem;
+    font: inherit;
 }
 
+textarea {
+    resize: vertical;
+    margin-bottom: 0.75rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid var(--cor-primaria-hover);
+    outline-offset: 1px;
+}
+
+.erro-campo {
+    color: #ffb4ab;
+    margin: 0.25rem 0 0;
+    font-size: 0.9rem;
+}
+
+.dica {
+    color: var(--cor-texto-suave);
+    font-size: 0.9rem;
+}
+
+.acoes {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 1.25rem;
+}
+
+/* Botões */
 .botao,
 .botao-secundario {
+    display: inline-block;
     padding: 0.6rem 1rem;
     border-radius: 6px;
-    font-size: 1rem;
-    cursor: pointer;
     border: 1px solid var(--cor-primaria);
+    font: inherit;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .botao {
@@ -89,11 +177,25 @@ input[type="text"] {
     color: #fff;
 }
 
-.botao-secundario {
-    background: #fff;
-    color: var(--cor-primaria);
+.botao:hover {
+    background: var(--cor-primaria-hover);
 }
 
+.botao-inline {
+    width: auto;
+    margin-top: 0;
+}
+
+.botao-secundario {
+    background: transparent;
+    color: var(--cor-link);
+}
+
+.botao-secundario:hover {
+    background: var(--cor-borda);
+}
+
+/* Avisos */
 .aviso {
     padding: 0.75rem 1rem;
     border-radius: 6px;
@@ -101,22 +203,120 @@ input[type="text"] {
 }
 
 .aviso-erro {
-    background: #fde8e8;
-    color: #8a1c1c;
+    background: #3a1d1f;
+    color: #ffb4ab;
 }
 
 .aviso-aviso {
-    background: #fff4d6;
-    color: #6b4e00;
+    background: #3a3017;
+    color: #ffd479;
 }
 
 .aviso-sucesso {
-    background: #e2f4e6;
-    color: #1b5e2b;
+    background: #17301f;
+    color: #86e0a0;
 }
 
-.erro-campo {
-    color: #b3261e;
-    margin: 0.25rem 0 0;
+/* Tabela */
+.tabela-rolavel {
+    overflow-x: auto;
+}
+
+.tabela {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela th,
+.tabela td {
+    padding: 0.7rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--cor-borda);
+    white-space: nowrap;
+}
+
+.tabela th {
+    color: var(--cor-texto-suave);
+    font-weight: 600;
     font-size: 0.9rem;
+}
+
+.vazio {
+    color: var(--cor-texto-suave);
+}
+
+/* Selos de status */
+.selo {
+    display: inline-block;
+    padding: 0.15rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    background: #1e3a5f;
+    color: #a9ccff;
+}
+
+.selo-postado,
+.selo-em_transito {
+    background: #3a3017;
+    color: #ffd479;
+}
+
+.selo-saiu_entrega {
+    background: #4a2f14;
+    color: #ffb774;
+}
+
+.selo-entregue {
+    background: #17301f;
+    color: #86e0a0;
+}
+
+/* Detalhe do pedido */
+.dados {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+}
+
+.dados dt {
+    color: var(--cor-texto-suave);
+}
+
+.dados dd {
+    margin: 0;
+}
+
+.linha-copiar {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.linha-copiar input {
+    flex: 1;
+}
+
+.historico {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.historico li {
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.historico li:last-child {
+    border-bottom: 0;
+}
+
+.historico span {
+    color: var(--cor-texto-suave);
+}
+
+.historico small {
+    color: var(--cor-texto-suave);
 }

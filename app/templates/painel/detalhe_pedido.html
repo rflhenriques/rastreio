@@ -1,0 +1,54 @@
+{% extends "painel/base.html" %}
+
+{% block titulo %}{{ pedido.nome_cliente }}{% endblock %}
+
+{% block conteudo %}
+<p><a href="{{ url_for('painel.inicio') }}">← Voltar aos pedidos</a></p>
+
+<div class="cabecalho-pagina">
+  <h1>{{ pedido.nome_cliente }}</h1>
+  <span class="selo selo-{{ pedido.status.value }}">{{ pedido.rotulo_status }}</span>
+</div>
+
+<section class="cartao">
+  <dl class="dados">
+    <dt>Tipo de envio</dt>
+    <dd>{{ pedido.rotulo_tipo }}</dd>
+    <dt>Código dos Correios</dt>
+    <dd>{{ pedido.codigo_rastreio or "ainda não cadastrado" }}</dd>
+    <dt>Criado em</dt>
+    <dd>{{ pedido.criado_em|data_br }}</dd>
+  </dl>
+</section>
+
+<section class="cartao">
+  <h2>Link do cliente</h2>
+  <div class="linha-copiar">
+    <input type="text" id="campo-link" value="{{ link }}" readonly>
+    <button type="button" class="botao-secundario" data-copiar="#campo-link">Copiar link</button>
+  </div>
+</section>
+
+<section class="cartao">
+  <h2>Mensagem para o WhatsApp</h2>
+  <textarea id="campo-mensagem" rows="5">{{ mensagem }}</textarea>
+  <button type="button" class="botao-secundario" data-copiar="#campo-mensagem">Copiar mensagem</button>
+</section>
+
+<section class="cartao">
+  <h2>Histórico</h2>
+  {% if pedido.eventos %}
+    <ul class="historico">
+      {% for evento in pedido.eventos|reverse %}
+      <li>
+        <strong>{{ evento.descricao }}</strong>
+        {% if evento.local %}<span>{{ evento.local }}</span>{% endif %}
+        <small>{{ evento.ocorrido_em|data_br }} · {{ evento.origem.value }}</small>
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="vazio">Ainda não há eventos.</p>
+  {% endif %}
+</section>
+{% endblock %}

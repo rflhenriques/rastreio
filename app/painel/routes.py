@@ -4,9 +4,10 @@ from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app.extensions import db
-from app.models import Usuario
+from app.models import Pedido, TipoEnvio, Usuario
 from app.painel import bp
-from app.painel.forms import LoginForm
+from app.painel.forms import LoginForm, PedidoForm
+from app.servicos.mensagens import link_publico, montar_mensagem_whatsapp
 
 
 def _destino_seguro(destino):
@@ -54,4 +55,34 @@ def logout():
 @bp.get("/")
 @login_required
 def inicio():
-    return render_template("painel/inicio.html")
+    consulta = db.select(Pedido).order_by(Pedido.criado_em.desc())
+    pedidos = db.session.scalars(consulta).all()
+    return render_template("painel/inicio.html", pedidos=pedidos)
+
+
+@bp.route("/pedidos/novo", methods=["GET", "POST"])
+@login_required
+def novo_pedido():
+    form = PedidoForm()
+    if form.validate_on_submit():
+        pedido = Pedido(
+            nome_cliente=form.nome_cliente.data.strip(),
+            tipo_envio=TipoEnvio[form.tipo_envio.data],
+        )
+        db.session.add(pedido)
+        db.session.commit()
+        flash("Pedido criado. Copie a mensagem abaixo e envie ao cliente.", "sucesso")
+        return redirect(url_for("painel.detalhe_pedido", pedido_id=pedido.id))
+    return render_template("painel/novo_pedido.html", form=form)
+
+
+@bp.get("/pedidos/<int:pedido_id>")
+@login_required
+def detalhe_pedido(pedido_id):
+    pedido = db.get_or_404(Pedido, pedido_id)
+    return render_template(
+        "painel/detalhe_pedido.html",
+        pedido=pedido,
+        link=link_publico(pedido),
+        mensagem=montar_mensagem_whatsapp(pedido),
+    )

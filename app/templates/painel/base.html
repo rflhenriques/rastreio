@@ -6,11 +6,16 @@
   <meta name="robots" content="noindex, nofollow">
   <title>{% block titulo %}Painel{% endblock %} · Rastreio</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
+  <script src="{{ url_for('static', filename='js/painel.js') }}" defer></script>
 </head>
 <body>
   {% if current_user.is_authenticated %}
   <header class="topo">
-    <strong>Rastreio · Painel</strong>
+    <nav class="menu">
+      <strong>Rastreio</strong>
+      <a href="{{ url_for('painel.inicio') }}">Pedidos</a>
+      <a href="{{ url_for('painel.novo_pedido') }}">Novo pedido</a>
+    </nav>
     <form method="post" action="{{ url_for('painel.logout') }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <span>{{ current_user.nome }}</span>

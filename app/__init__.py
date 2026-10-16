@@ -20,6 +20,10 @@ def create_app(config_class=Config):
 
     registrar_comandos(app)
 
+    from app.filtros import registrar_filtros
+
+    registrar_filtros(app)
+
     from app.painel import bp as painel_bp
 
     app.register_blueprint(painel_bp)

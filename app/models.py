@@ -64,6 +64,10 @@ ROTULOS_STATUS = {
     Status.ENTREGUE: "Entregue",
 }
 
+ROTULOS_TIPO = {
+    TipoEnvio.PECA_NOVA: "Peça nova",
+    TipoEnvio.REPOSICAO: "Reposição",
+}
 
 class Pedido(db.Model):
     __tablename__ = "pedidos"
@@ -98,6 +102,10 @@ class Pedido(db.Model):
                 return "Contrato fechado"
             return "Pedido recebido"
         return ROTULOS_STATUS[self.status]
+
+    @property
+    def rotulo_tipo(self):
+        return ROTULOS_TIPO[self.tipo_envio]
 
 class Evento(db.Model):
     __tablename__ = "eventos"
