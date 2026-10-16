@@ -14,7 +14,11 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
-    from app import models
+    from app import models  # noqa: F401
+
+    from app.comandos import registrar_comandos
+
+    registrar_comandos(app)
 
     @app.get("/saude")
     def saude():
