@@ -23,8 +23,23 @@ def _como_utc_ingenuo(momento):
     return momento
 
 
+def _como_utc(momento):
+    if momento.tzinfo is None:
+        return momento.replace(tzinfo=timezone.utc)
+    return momento.astimezone(timezone.utc)
+
+
+def _momento_referencia(pedido):
+    internos = [
+        _como_utc(e.ocorrido_em) for e in pedido.eventos if e.origem == Origem.INTERNA
+    ]
+    return max(internos) if internos else _como_utc(pedido.criado_em)
+
+
 def atualizar_pedido(pedido, provedor):
-    eventos = provedor.buscar_eventos(pedido.codigo_rastreio)
+    eventos = provedor.buscar_eventos(
+        pedido.codigo_rastreio, _momento_referencia(pedido)
+    )
 
     ja_gravados = {
         (_como_utc_ingenuo(e.ocorrido_em), e.descricao)

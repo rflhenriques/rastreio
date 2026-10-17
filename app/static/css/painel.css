@@ -1,3 +1,4 @@
+/* ===== Tema escuro (padrão) ===== */
 :root {
     color-scheme: dark;
 
@@ -9,8 +10,58 @@
     --cor-primaria: #2f6fe4;
     --cor-primaria-hover: #4c8dff;
     --cor-link: #7fb0ff;
+    --cor-erro: #ffb4ab;
+
+    --aviso-erro-fundo: #3a1d1f;
+    --aviso-erro-texto: #ffb4ab;
+    --aviso-alerta-fundo: #3a3017;
+    --aviso-alerta-texto: #ffd479;
+    --aviso-sucesso-fundo: #17301f;
+    --aviso-sucesso-texto: #86e0a0;
+
+    --selo-info-fundo: #1e3a5f;
+    --selo-info-texto: #a9ccff;
+    --selo-laranja-fundo: #4a2f14;
+    --selo-laranja-texto: #ffb774;
 }
 
+/* ===== Tema claro ===== */
+:root[data-tema="claro"] {
+    color-scheme: light;
+
+    --cor-fundo: #f4f6f9;
+    --cor-superficie: #ffffff;
+    --cor-borda: #d5dbe3;
+    --cor-texto: #1c2430;
+    --cor-texto-suave: #5b6675;
+    --cor-primaria: #1f5fbf;
+    --cor-primaria-hover: #174a96;
+    --cor-link: #1f5fbf;
+    --cor-erro: #b3261e;
+
+    --aviso-erro-fundo: #fde8e8;
+    --aviso-erro-texto: #8a1c1c;
+    --aviso-alerta-fundo: #fff4d6;
+    --aviso-alerta-texto: #6b4e00;
+    --aviso-sucesso-fundo: #e2f4e6;
+    --aviso-sucesso-texto: #1b5e2b;
+
+    --selo-info-fundo: #dbe8fb;
+    --selo-info-texto: #1b4a94;
+    --selo-laranja-fundo: #ffe8d1;
+    --selo-laranja-texto: #8a4a00;
+}
+
+/* Rótulo do botão de tema: mostra só a ação que está disponível */
+:root:not([data-tema="claro"]) .so-claro {
+    display: none;
+}
+
+:root[data-tema="claro"] .so-escuro {
+    display: none;
+}
+
+/* ===== Base ===== */
 * {
     box-sizing: border-box;
 }
@@ -35,7 +86,7 @@ h2 {
     font-size: 1.1rem;
 }
 
-/* Topo e menu */
+/* ===== Topo e menu ===== */
 .topo {
     display: flex;
     justify-content: space-between;
@@ -56,11 +107,23 @@ h2 {
     text-decoration: none;
 }
 
+.topo-direita {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
 .topo form {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     margin: 0;
+}
+
+.topo-anonimo {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.75rem 1.25rem;
 }
 
 .conteudo {
@@ -81,7 +144,7 @@ h2 {
     margin: 0;
 }
 
-/* Cartões */
+/* ===== Cartões ===== */
 .cartao {
     background: var(--cor-superficie);
     border: 1px solid var(--cor-borda);
@@ -92,14 +155,14 @@ h2 {
 
 .cartao-login {
     max-width: 380px;
-    margin: 3rem auto;
+    margin: 2rem auto;
 }
 
 .cartao-form {
     max-width: 520px;
 }
 
-/* Formulários */
+/* ===== Formulários ===== */
 label {
     display: block;
     margin: 1rem 0 0.25rem;
@@ -139,8 +202,12 @@ textarea:focus {
     outline-offset: 1px;
 }
 
+input[name="codigo"] {
+    text-transform: uppercase;
+}
+
 .erro-campo {
-    color: #ffb4ab;
+    color: var(--cor-erro);
     margin: 0.25rem 0 0;
     font-size: 0.9rem;
 }
@@ -157,7 +224,7 @@ textarea:focus {
     margin-top: 1.25rem;
 }
 
-/* Botões */
+/* ===== Botões ===== */
 .botao,
 .botao-secundario {
     display: inline-block;
@@ -195,7 +262,13 @@ textarea:focus {
     background: var(--cor-borda);
 }
 
-/* Avisos */
+button:disabled,
+input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ===== Avisos ===== */
 .aviso {
     padding: 0.75rem 1rem;
     border-radius: 6px;
@@ -203,21 +276,21 @@ textarea:focus {
 }
 
 .aviso-erro {
-    background: #3a1d1f;
-    color: #ffb4ab;
+    background: var(--aviso-erro-fundo);
+    color: var(--aviso-erro-texto);
 }
 
 .aviso-aviso {
-    background: #3a3017;
-    color: #ffd479;
+    background: var(--aviso-alerta-fundo);
+    color: var(--aviso-alerta-texto);
 }
 
 .aviso-sucesso {
-    background: #17301f;
-    color: #86e0a0;
+    background: var(--aviso-sucesso-fundo);
+    color: var(--aviso-sucesso-texto);
 }
 
-/* Tabela */
+/* ===== Tabela ===== */
 .tabela-rolavel {
     overflow-x: auto;
 }
@@ -245,33 +318,33 @@ textarea:focus {
     color: var(--cor-texto-suave);
 }
 
-/* Selos de status */
+/* ===== Selos de status ===== */
 .selo {
     display: inline-block;
     padding: 0.15rem 0.65rem;
     border-radius: 999px;
     font-size: 0.85rem;
-    background: #1e3a5f;
-    color: #a9ccff;
+    background: var(--selo-info-fundo);
+    color: var(--selo-info-texto);
 }
 
 .selo-postado,
 .selo-em_transito {
-    background: #3a3017;
-    color: #ffd479;
+    background: var(--aviso-alerta-fundo);
+    color: var(--aviso-alerta-texto);
 }
 
 .selo-saiu_entrega {
-    background: #4a2f14;
-    color: #ffb774;
+    background: var(--selo-laranja-fundo);
+    color: var(--selo-laranja-texto);
 }
 
 .selo-entregue {
-    background: #17301f;
-    color: #86e0a0;
+    background: var(--aviso-sucesso-fundo);
+    color: var(--aviso-sucesso-texto);
 }
 
-/* Detalhe do pedido */
+/* ===== Detalhe do pedido ===== */
 .dados {
     display: grid;
     grid-template-columns: max-content 1fr;
@@ -296,6 +369,22 @@ textarea:focus {
     flex: 1;
 }
 
+.acao {
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.acao:last-child {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom: 0;
+}
+
+.acao label {
+    margin-top: 0;
+}
+
 .historico {
     list-style: none;
     margin: 0;
@@ -313,32 +402,7 @@ textarea:focus {
     border-bottom: 0;
 }
 
-.historico span {
-    color: var(--cor-texto-suave);
-}
-
+.historico span,
 .historico small {
     color: var(--cor-texto-suave);
-}
-
-/* Ações do pedido */
-
-.acao {
-    padding-bottom: 1.25rem;
-    margin-bottom: 1.25rem;
-    border-bottom: 1px solid var(--cor-borda);
-}
-
-.acao:last-child {
-    padding-bottom: 0;
-    margin-bottom: 0;
-    border-bottom: 0;
-}
-
-.acao label {
-    margin-top: 0;
-}
-
-input[name="codigo"] {
-    text-transform: uppercase;
 }

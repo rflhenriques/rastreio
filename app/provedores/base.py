@@ -19,5 +19,10 @@ class ErroProvedor(Exception):
 
 class ProvedorRastreio(ABC):
     @abstractmethod
-    def buscar_eventos(self, codigo: str) -> list[EventoRastreio]:
-        """Devolve os eventos de rastreio do código, em qualquer ordem."""
+    def buscar_eventos(self, codigo: str, referencia: datetime) -> list[EventoRastreio]:
+        """Devolve os eventos de rastreio do código, em qualquer ordem.
+
+        `referencia` é o momento (em UTC, com fuso) em que o pedido ficou pronto
+        para postagem. Provedores reais podem ignorá-lo; o simulado o usa para
+        gerar eventos coerentes com o histórico interno.
+        """

@@ -37,8 +37,14 @@ def criar_pedido(nome_cliente, tipo_envio):
     return pedido
 
 
+def _proxima_etapa(pedido):
+    if pedido.codigo_rastreio:
+        return None
+    return PROXIMA_ETAPA.get(pedido.status)
+
+
 def proxima_etapa_interna(pedido):
-    proxima = PROXIMA_ETAPA.get(pedido.status)
+    proxima = _proxima_etapa(pedido)
     return ROTULOS_STATUS[proxima] if proxima else None
 
 
@@ -48,7 +54,7 @@ def avancar_etapa(pedido, etapa_esperada):
             "O pedido já mudou de etapa. Atualize a página e confira o status atual."
         )
 
-    proxima = PROXIMA_ETAPA.get(pedido.status)
+    proxima = _proxima_etapa(pedido)
     if proxima is None:
         raise ErroDeRegra("Este pedido não tem uma próxima etapa interna.")
 

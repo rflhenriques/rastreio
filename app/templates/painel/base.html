@@ -5,10 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>{% block titulo %}Painel{% endblock %} · Rastreio</title>
+  <script src="{{ url_for('static', filename='js/tema.js') }}"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
   <script src="{{ url_for('static', filename='js/painel.js') }}" defer></script>
 </head>
 <body>
+  {% macro botao_tema() %}
+  <button type="button" class="botao-secundario" data-alternar-tema
+          title="Alternar entre tema escuro e claro">
+    <span class="so-escuro">Tema claro</span>
+    <span class="so-claro">Tema escuro</span>
+  </button>
+  {% endmacro %}
+
   {% if current_user.is_authenticated %}
   <header class="topo">
     <nav class="menu">
@@ -16,12 +25,17 @@
       <a href="{{ url_for('painel.inicio') }}">Pedidos</a>
       <a href="{{ url_for('painel.novo_pedido') }}">Novo pedido</a>
     </nav>
-    <form method="post" action="{{ url_for('painel.logout') }}">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <span>{{ current_user.nome }}</span>
-      <button type="submit" class="botao-secundario">Sair</button>
-    </form>
+    <div class="topo-direita">
+      {{ botao_tema() }}
+      <form method="post" action="{{ url_for('painel.logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <span>{{ current_user.nome }}</span>
+        <button type="submit" class="botao-secundario">Sair</button>
+      </form>
+    </div>
   </header>
+  {% else %}
+  <div class="topo-anonimo">{{ botao_tema() }}</div>
   {% endif %}
 
   <main class="conteudo">

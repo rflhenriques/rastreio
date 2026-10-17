@@ -30,7 +30,7 @@
   {% else %}
 
     {% if proxima_etapa %}
-    <form method="post" class="acao"
+    <form method="post" class="acao" data-ajax
           action="{{ url_for('painel.avancar_pedido', pedido_id=pedido.id) }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="etapa_atual" value="{{ pedido.status.name }}">
@@ -39,7 +39,7 @@
     {% endif %}
 
     {% if not pedido.tem_eventos_correios %}
-    <form method="post" class="acao" novalidate
+    <form method="post" class="acao" data-ajax novalidate
           action="{{ url_for('painel.cadastrar_codigo_pedido', pedido_id=pedido.id) }}">
       {{ form_codigo.hidden_tag() }}
       {{ campo(form_codigo.codigo, placeholder="AA123456789BR", maxlength=13, autocomplete="off") }}
@@ -50,7 +50,7 @@
     {% endif %}
 
     {% if pedido.codigo_rastreio %}
-    <form method="post" class="acao"
+    <form method="post" class="acao" data-ajax
           action="{{ url_for('painel.consultar_pedido', pedido_id=pedido.id) }}">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit" class="botao-secundario">Consultar Correios agora</button>
