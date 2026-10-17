@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% block titulo %}Acompanhe seu pedido{% endblock %}</title>
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:title" content="Acompanhe o seu pedido">
+  <meta property="og:description" content="Veja em que etapa está a entrega das suas peças.">
+
+  <script src="{{ url_for('static', filename='js/tema.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/publico.css') }}">
+</head>
+<body>
+  {% from "_tema.html" import botao_tema %}
+
+  <div class="topo-publico">
+    <strong class="marca">Rastreio</strong>
+    {{ botao_tema() }}
+  </div>
+
+  <main class="conteudo-publico">
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  <footer class="rodape-publico">
+    As informações dos Correios podem levar algumas horas para aparecer aqui.
+  </footer>
+</body>
+</html>

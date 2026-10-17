@@ -27,6 +27,10 @@ def create_app(config_class=Config):
     from app.painel import bp as painel_bp
 
     app.register_blueprint(painel_bp)
+
+    from app.publico import bp as publico_bp
+
+    app.register_blueprint(publico_bp)
     
     csrf.init_app(app)
 

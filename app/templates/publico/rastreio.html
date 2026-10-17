@@ -1,0 +1,47 @@
+{% extends "publico/base.html" %}
+
+{% block titulo %}Pedido de {{ pedido.nome_cliente }}{% endblock %}
+
+{% block conteudo %}
+<header class="cabecalho-publico">
+  <p class="sobretitulo">Acompanhe o seu pedido</p>
+  <h1>{{ pedido.nome_cliente }}</h1>
+  <span class="selo selo-grande selo-{{ pedido.status.value }}">{{ pedido.rotulo_status }}</span>
+
+  {% if ultimo %}
+    <p class="suave">Última atualização: {{ ultimo.ocorrido_em|data_br }}</p>
+  {% endif %}
+  {% if pedido.codigo_rastreio %}
+    <p class="suave">Código de rastreio dos Correios: <strong>{{ pedido.codigo_rastreio }}</strong></p>
+  {% endif %}
+</header>
+
+<section class="cartao">
+  <h2>Andamento</h2>
+  <ol class="etapas">
+    {% for etapa in etapas %}
+    <li class="etapa etapa-{{ etapa.estado }}"{% if etapa.estado == "atual" %} aria-current="step"{% endif %}>
+      {{ etapa.rotulo }}
+      {% if etapa.estado == "feita" %}<span class="sr-only">(concluída)</span>{% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+</section>
+
+<section class="cartao">
+  <h2>Histórico</h2>
+  {% if historico %}
+    <ul class="historico">
+      {% for evento in historico %}
+      <li>
+        <strong>{{ evento.descricao }}</strong>
+        {% if evento.local %}<span>{{ evento.local }}</span>{% endif %}
+        <small>{{ evento.ocorrido_em|data_br }}</small>
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="vazio">Ainda não há atualizações.</p>
+  {% endif %}
+</section>
+{% endblock %}

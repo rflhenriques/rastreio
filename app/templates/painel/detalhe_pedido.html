@@ -78,7 +78,7 @@
   <h2>Histórico</h2>
   {% if pedido.eventos %}
     <ul class="historico">
-      {% for evento in pedido.eventos|reverse %}
+      {% for evento in pedido.historico %}
       <li>
         <strong>{{ evento.descricao }}</strong>
         {% if evento.local %}<span>{{ evento.local }}</span>{% endif %}

@@ -6,17 +6,11 @@
   <meta name="robots" content="noindex, nofollow">
   <title>{% block titulo %}Painel{% endblock %} · Rastreio</title>
   <script src="{{ url_for('static', filename='js/tema.js') }}"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/painel.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
   <script src="{{ url_for('static', filename='js/painel.js') }}" defer></script>
 </head>
 <body>
-  {% macro botao_tema() %}
-  <button type="button" class="botao-secundario" data-alternar-tema
-          title="Alternar entre tema escuro e claro">
-    <span class="so-escuro">Tema claro</span>
-    <span class="so-claro">Tema escuro</span>
-  </button>
-  {% endmacro %}
+  {% from "_tema.html" import botao_tema %}
 
   {% if current_user.is_authenticated %}
   <header class="topo">
