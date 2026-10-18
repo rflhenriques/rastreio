@@ -4,22 +4,31 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>{% block titulo %}Acompanhe seu pedido{% endblock %}</title>
+  <title>{% block titulo %}Acompanhe o seu pedido{% endblock %} · {{ marca.nome }}</title>
 
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
-  <meta property="og:title" content="Acompanhe o seu pedido">
+  <meta property="og:site_name" content="{{ marca.nome }}">
+  <meta property="og:title" content="Acompanhe o seu pedido · {{ marca.nome }}">
   <meta property="og:description" content="Veja em que etapa está a entrega das suas peças.">
+  <meta property="og:image" content="{{ marca.imagem_compartilhamento }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Logotipo da {{ marca.nome }}">
 
+  <link rel="preload" href="{{ url_for('static', filename='fonts/inter-latin-wght-normal.woff2') }}"
+        as="font" type="font/woff2" crossorigin>
   <script src="{{ url_for('static', filename='js/tema.js') }}"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/publico.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/marca.css') }}">
 </head>
 <body>
   {% from "_tema.html" import botao_tema %}
 
   <div class="topo-publico">
-    <strong class="marca">Rastreio</strong>
+    <img class="logo-publico" src="{{ url_for('static', filename='img/logo.webp') }}"
+         alt="{{ marca.nome }}" width="142" height="56">
     {{ botao_tema() }}
   </div>
 

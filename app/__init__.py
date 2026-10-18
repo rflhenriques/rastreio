@@ -24,6 +24,16 @@ def create_app(config_class=Config):
 
     registrar_filtros(app)
 
+    @app.context_processor
+    def dados_da_marca():
+        base = app.config["URL_BASE_PUBLICA"].rstrip("/")
+        return {
+            "marca": {
+                "nome": app.config["NOME_EMPRESA"],
+                "imagem_compartilhamento": f"{base}/static/img/og.png",
+            }
+        }
+
     from app.painel import bp as painel_bp
 
     app.register_blueprint(painel_bp)

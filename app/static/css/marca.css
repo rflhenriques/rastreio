@@ -1,0 +1,125 @@
+/* Identidade visual da Lance Replay.
+   Tudo o que é da marca fica neste arquivo, carregado por último. */
+
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url("../fonts/inter-latin-wght-normal.woff2") format("woff2-variations"),
+        url("../fonts/inter-latin-wght-normal.woff2") format("woff2");
+}
+
+/* Cores: tema escuro (padrão) */
+:root {
+    --fonte: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+    --cor-fundo: #000000;
+    --cor-superficie: #121212;
+    --cor-borda: #2e2e2e;
+    --cor-texto: #ffffff;
+    --cor-texto-suave: #a8a8a8;
+
+    --cor-primaria: #00a959;
+    --cor-primaria-hover: #19c972;
+    --cor-sobre-primaria: #000000;
+    --cor-link: #00a959;
+    --cor-foco: #00a959;
+
+    --selo-info-fundo: #2e2e2e;
+    --selo-info-texto: #f2f2f2;
+}
+
+/* Cores: tema claro (repete as variáveis que o base.css também define,
+   porque o seletor do tema claro tem prioridade sobre o :root) */
+:root[data-tema="claro"] {
+    --cor-fundo: #ffffff;
+    --cor-superficie: #f5f5f5;
+    --cor-borda: #d9d9d9;
+    --cor-texto: #000000;
+    --cor-texto-suave: #595959;
+
+    --cor-primaria: #00a959;
+    --cor-primaria-hover: #19c972;
+    --cor-link: #007a3d;
+    --cor-foco: #007a3d;
+
+    --selo-info-fundo: #e4e4e4;
+    --selo-info-texto: #1a1a1a;
+}
+
+/* Tipografia */
+body {
+    font-family: var(--fonte);
+    font-size: 1rem;
+    line-height: 1.5;
+    border-top: 4px solid var(--cor-primaria);
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+h1,
+h2 {
+    font-weight: 700;
+}
+
+/* Botão principal: texto preto sobre o verde (contraste de 6,8:1) */
+.botao {
+    color: var(--cor-sobre-primaria);
+    font-weight: 600;
+}
+
+/* Foco visível ao navegar pelo teclado */
+input:focus,
+select:focus,
+textarea:focus {
+    outline-color: var(--cor-foco);
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--cor-foco);
+    outline-offset: 2px;
+}
+
+/* Logo */
+.logo-topo,
+.logo-publico,
+.logo-login {
+    display: block;
+    width: auto;
+}
+
+.logo-topo {
+    height: 40px;
+}
+
+.logo-publico {
+    height: 56px;
+}
+
+.logo-login {
+    height: 72px;
+    margin: 0 auto 1.25rem;
+}
+
+/* Cabeçalho do painel: quebra em telas estreitas em vez de estourar a largura */
+.topo,
+.topo-direita {
+    flex-wrap: wrap;
+}
+
+/* Andamento da página pública: etapas concluídas na cor da marca */
+.etapa-feita::before {
+    background: var(--cor-primaria);
+    border-color: var(--cor-primaria);
+}
+
+.etapa-feita::after {
+    background: var(--cor-primaria);
+}

@@ -4,6 +4,9 @@
 
 {% block conteudo %}
 <section class="cartao cartao-login">
+  <img class="logo-login" src="{{ url_for('static', filename='img/logo.webp') }}"
+       alt="{{ marca.nome }}" width="183" height="72">
+  <h1>Entrar no painel</h1>
   <h1>Entrar no painel</h1>
   <form method="post" novalidate>
     {{ form.hidden_tag() }}
