@@ -4,7 +4,7 @@ from datetime import timezone
 from flask import current_app
 
 from app.extensions import db
-from app.models import Evento, Origem, Pedido, Status
+from app.models import Evento, Origem, Pedido, Status, como_utc
 from app.provedores import ErroProvedor
 
 ORDEM_STATUS = list(Status)
@@ -23,17 +23,11 @@ def _como_utc_ingenuo(momento):
     return momento
 
 
-def _como_utc(momento):
-    if momento.tzinfo is None:
-        return momento.replace(tzinfo=timezone.utc)
-    return momento.astimezone(timezone.utc)
-
-
 def _momento_referencia(pedido):
     internos = [
-        _como_utc(e.ocorrido_em) for e in pedido.eventos if e.origem == Origem.INTERNA
+        como_utc(e.ocorrido_em) for e in pedido.eventos if e.origem == Origem.INTERNA
     ]
-    return max(internos) if internos else _como_utc(pedido.criado_em)
+    return max(internos) if internos else como_utc(pedido.criado_em)
 
 
 def atualizar_pedido(pedido, provedor):

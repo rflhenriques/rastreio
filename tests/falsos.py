@@ -2,6 +2,9 @@ from datetime import datetime, timedelta, timezone
 
 from app.provedores.base import EventoRastreio, ProvedorRastreio
 
+EMAIL = "teste@exemplo.com"
+SENHA = "senha-de-teste"
+
 BASE = datetime(2026, 10, 1, 12, 0, tzinfo=timezone.utc)
 
 

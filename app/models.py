@@ -29,10 +29,12 @@ class Origem(enum.Enum):
     INTERNA = "interna"
     CORREIOS = "correios"
 
+
 def agora_utc():
     return datetime.now(timezone.utc)
 
-def _como_utc(momento):
+
+def como_utc(momento):
     if momento.tzinfo is None:
         return momento.replace(tzinfo=timezone.utc)
     return momento.astimezone(timezone.utc)
@@ -56,9 +58,11 @@ class Usuario(UserMixin, db.Model):
     def verificar_senha(self, senha):
         return check_password_hash(self.senha_hash, senha)
 
-    @login_manager.user_loader
-    def carregar_usuario(user_id):
-        return db.session.get(Usuario, int(user_id))
+
+@login_manager.user_loader
+def carregar_usuario(user_id):
+    return db.session.get(Usuario, int(user_id))
+
 
 ROTULOS_STATUS = {
     Status.EM_PREPARACAO: "Em preparação",
@@ -69,6 +73,7 @@ ROTULOS_STATUS = {
     Status.ENTREGUE: "Entregue",
 }
 
+
 def rotulo_do_status(status, tipo_envio):
     if status == Status.RECEBIDO:
         if tipo_envio == TipoEnvio.PECA_NOVA:
@@ -76,10 +81,12 @@ def rotulo_do_status(status, tipo_envio):
         return "Pedido recebido"
     return ROTULOS_STATUS[status]
 
+
 ROTULOS_TIPO = {
     TipoEnvio.PECA_NOVA: "Peça nova",
     TipoEnvio.REPOSICAO: "Reposição",
 }
+
 
 class Pedido(db.Model):
     __tablename__ = "pedidos"
@@ -109,38 +116,6 @@ class Pedido(db.Model):
 
     @property
     def rotulo_status(self):
-        if self.status == Status.RECEBIDO:
-            if self.tipo_envio == TipoEnvio.PECA_NOVA:
-                return "Contrato fechado"
-            return "Pedido recebido"
-        return ROTULOS_STATUS[self.status]
-
-    @property
-    def rotulo_tipo(self):
-        return ROTULOS_TIPO[self.tipo_envio]
-
-    @property
-    def rotulo_status(self):
-        if self.status == Status.RECEBIDO:
-            if self.tipo_envio == TipoEnvio.PECA_NOVA:
-                return "Contrato fechado"
-            return "Pedido recebido"
-        return ROTULOS_STATUS[self.status]
-
-    @property
-    def rotulo_tipo(self):
-        return ROTULOS_TIPO[self.tipo_envio]
-
-    @property
-    def tem_eventos_correios(self):
-        return any(evento.origem == Origem.CORREIOS for evento in self.eventos)
-
-    @property
-    def entregue(self):
-        return self.status == Status.ENTREGUE
-
-    @property
-    def rotulo_status(self):
         return rotulo_do_status(self.status, self.tipo_envio)
 
     @property
@@ -159,9 +134,10 @@ class Pedido(db.Model):
     def historico(self):
         return sorted(
             self.eventos,
-            key=lambda evento: (_como_utc(evento.ocorrido_em), evento.id or 0),
+            key=lambda evento: (como_utc(evento.ocorrido_em), evento.id or 0),
             reverse=True,
         )
+
 
 class Evento(db.Model):
     __tablename__ = "eventos"

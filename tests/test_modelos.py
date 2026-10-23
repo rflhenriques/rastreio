@@ -4,7 +4,25 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 
 from app.extensions import db
-from app.models import Evento, Origem, Status, TipoEnvio, Usuario, rotulo_do_status
+from app.models import (
+    Evento, 
+    Origem, 
+    Status, 
+    TipoEnvio, 
+    Usuario, 
+    rotulo_do_status, 
+    como_utc, 
+    carregar_usuario
+)
+
+
+def test_como_utc_aceita_datas_com_e_sem_fuso():
+    esperado = datetime(2026, 10, 3, 2, 0, tzinfo=timezone.utc)
+    sem_fuso = datetime(2026, 10, 3, 2, 0)
+    brasilia = datetime(2026, 10, 2, 23, 0, tzinfo=timezone(timedelta(hours=-3)))
+
+    assert como_utc(sem_fuso) == esperado
+    assert como_utc(brasilia) == esperado
 
 
 def test_token_e_gerado_automaticamente_e_e_unico(fabrica_pedido):
@@ -80,3 +98,18 @@ def test_senha_e_guardada_como_hash():
     assert "segredo-123" not in usuario.senha_hash
     assert usuario.verificar_senha("segredo-123")
     assert not usuario.verificar_senha("outra-senha")
+
+
+def test_carregar_usuario_flask_login(app):  # <-- Injeta o app aqui
+    with app.app_context():                  # <-- Abre o contexto do Flask
+        usuario = Usuario(nome="Loader Test", email="loader@exemplo.com")
+        usuario.definir_senha("123456")
+        db.session.add(usuario)
+        db.session.commit()
+
+        # Testa se a função do Flask-Login acha o usuário
+        usuario_carregado = carregar_usuario(usuario.id)
+        assert usuario_carregado == usuario
+        
+        # Testa se retorna None para ID inexistente
+        assert carregar_usuario(9999) is None
