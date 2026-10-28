@@ -1,13 +1,10 @@
 import os
+from datetime import timedelta
 
 from dotenv import load_dotenv
-from datetime import timedelta
 
 load_dotenv()
 
-SESSION_COOKIE_SAMESITE = "Lax"
-REMEMBER_COOKIE_DURATION = timedelta(days=7)
-REMEMBER_COOKIE_SAMESITE = "Lax"
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -16,12 +13,17 @@ class Config:
     URL_BASE_PUBLICA = os.environ.get("URL_BASE_PUBLICA", "http://127.0.0.1:5000")
     NOME_EMPRESA = os.environ.get("NOME_EMPRESA", "Lance Replay")
 
+    SESSION_COOKIE_SAMESITE = "Lax"
+    REMEMBER_COOKIE_DURATION = timedelta(days=7)
+    REMEMBER_COOKIE_SAMESITE = "Lax"
+
     CORREIOS_AMBIENTE = os.environ.get("CORREIOS_AMBIENTE", "producao")
+    CORREIOS_CHAVE_ACESSO = os.environ.get("CORREIOS_CHAVE_ACESSO")
     CORREIOS_USUARIO = os.environ.get("CORREIOS_USUARIO")
     CORREIOS_CODIGO_ACESSO = os.environ.get("CORREIOS_CODIGO_ACESSO")
     CORREIOS_CARTAO_POSTAGEM = os.environ.get("CORREIOS_CARTAO_POSTAGEM")
     CORREIOS_TIMEOUT = int(os.environ.get("CORREIOS_TIMEOUT", "15"))
-    CORREIOS_CHAVE_ACESSO = os.environ.get("CORREIOS_CHAVE_ACESSO")
+
 
 class TestConfig(Config):
     TESTING = True

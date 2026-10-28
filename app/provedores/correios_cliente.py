@@ -76,6 +76,13 @@ class ClienteCorreios:
     def tamanho_da_chave(self):
         return len(self._chave or "")
 
+    @property
+    def chave_mascarada(self):
+        chave = self._chave or ""
+        if len(chave) <= 10:
+            return "***"
+        return f"{chave[:4]}...{chave[-4:]}"
+
     # ----- token (somente no modo código de acesso) -----
 
     def gerar_token(self):

@@ -65,8 +65,8 @@ def registrar_comandos(app):
 
             if cliente.usa_chave_de_acesso:
                 click.echo(
-                    f"Modo: chave de acesso ({cliente.tamanho_da_chave} caracteres). "
-                    f"Ambiente: {cliente.ambiente}"
+                    f"Modo: chave de acesso {cliente.chave_mascarada} "
+                    f"({cliente.tamanho_da_chave} caracteres). Ambiente: {cliente.ambiente}"
                 )
             else:
                 cliente.gerar_token()
