@@ -1,9 +1,14 @@
+import json
+from pathlib import Path
+
 import click
 from flask import current_app
 
 from app.extensions import db
+from app.filtros import FUSO_BRASILIA
 from app.models import Usuario
-from app.provedores import obter_provedor
+from app.provedores import ErroProvedor, obter_provedor
+from app.provedores.correios_cliente import criar_cliente_correios
 from app.servicos.atualizador import atualizar_todos
 
 
@@ -45,3 +50,62 @@ def registrar_comandos(app):
         db.session.add(usuario)
         db.session.commit()
         click.echo(f"Usuário {usuario.email} criado.")
+
+    @app.cli.command("testar-correios")
+    @click.argument("codigo", required=False)
+    @click.option(
+        "--salvar",
+        is_flag=True,
+        help="Salva a resposta bruta em instance/resposta_correios.json",
+    )
+    def testar_correios(codigo, salvar):
+        """Testa a conexão com os Correios. Não grava nada no banco."""
+        try:
+            cliente = criar_cliente_correios(current_app.config)
+
+            if cliente.usa_chave_de_acesso:
+                click.echo(
+                    f"Modo: chave de acesso ({cliente.tamanho_da_chave} caracteres). "
+                    f"Ambiente: {cliente.ambiente}"
+                )
+            else:
+                cliente.gerar_token()
+                validade = cliente.token_expira_em.astimezone(FUSO_BRASILIA)
+                click.echo(f"Token gerado. Ambiente: {cliente.info_token.get('ambiente')}")
+                click.echo(f"Válido até (Brasília): {validade:%d/%m/%Y %H:%M}")
+                click.echo(f"APIs liberadas (ids): {cliente.info_token.get('apis')}")
+
+            if not codigo:
+                click.echo(
+                    "Configuração lida. Rode de novo com um código de rastreio "
+                    "para validar de verdade."
+                )
+                return
+
+            dados = cliente.consultar_objeto(codigo.strip().upper())
+        except ErroProvedor as erro:
+            raise click.ClickException(str(erro))
+
+        corpo = dados if isinstance(dados, dict) else {}
+        objetos = corpo.get("objetos") or []
+        objeto = objetos[0] if objetos else {}
+        eventos = objeto.get("eventos") or []
+
+        click.echo(f"Objeto: {objeto.get('codObjeto', codigo)}")
+        if objeto.get("mensagem"):
+            click.echo(f"Mensagem dos Correios: {objeto['mensagem']}")
+        click.echo(f"Eventos: {len(eventos)}")
+        for evento in eventos[:5]:
+            click.echo(
+                f"  {evento.get('dtHrCriado')} | {evento.get('codigo')} | "
+                f"{evento.get('descricao')}"
+            )
+        click.echo(f"Data prevista de entrega (dtPrevista): {objeto.get('dtPrevista')}")
+
+        if salvar:
+            caminho = Path(current_app.instance_path) / "resposta_correios.json"
+            caminho.parent.mkdir(parents=True, exist_ok=True)
+            caminho.write_text(
+                json.dumps(dados, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            click.echo(f"Resposta salva em {caminho}")

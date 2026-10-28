@@ -16,6 +16,13 @@ class Config:
     URL_BASE_PUBLICA = os.environ.get("URL_BASE_PUBLICA", "http://127.0.0.1:5000")
     NOME_EMPRESA = os.environ.get("NOME_EMPRESA", "Lance Replay")
 
+    CORREIOS_AMBIENTE = os.environ.get("CORREIOS_AMBIENTE", "producao")
+    CORREIOS_USUARIO = os.environ.get("CORREIOS_USUARIO")
+    CORREIOS_CODIGO_ACESSO = os.environ.get("CORREIOS_CODIGO_ACESSO")
+    CORREIOS_CARTAO_POSTAGEM = os.environ.get("CORREIOS_CARTAO_POSTAGEM")
+    CORREIOS_TIMEOUT = int(os.environ.get("CORREIOS_TIMEOUT", "15"))
+    CORREIOS_CHAVE_ACESSO = os.environ.get("CORREIOS_CHAVE_ACESSO")
+
 class TestConfig(Config):
     TESTING = True
     SECRET_KEY = "chave-de-teste"
