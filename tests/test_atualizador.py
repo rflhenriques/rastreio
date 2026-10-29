@@ -64,21 +64,16 @@ def test_status_nunca_retrocede(fabrica_pedido):
     assert pedido.status == Status.SAIU_ENTREGA
 
 
-def test_etapa_mais_avancada_vale_mesmo_se_o_ultimo_evento_for_anterior(fabrica_pedido):
+def test_status_vem_da_etapa_mais_avancada_mesmo_fora_de_ordem(fabrica_pedido):
     pedido = fabrica_pedido(codigo=CODIGO)
     provedor = ProvedorFalso(
-        {
-            CODIGO: [
-                evento(0, Status.POSTADO),
-                evento(30, Status.SAIU_ENTREGA),
-                evento(60, Status.EM_TRANSITO),
-            ]
-        }
+        {CODIGO: [evento(60, Status.EM_TRANSITO), evento(0, Status.POSTADO)]}
     )
 
     atualizar_pedido(pedido, provedor)
 
-    assert pedido.status == Status.SAIU_ENTREGA
+    assert pedido.status == Status.EM_TRANSITO
+
 
 
 def test_atualizar_todos_ignora_pedidos_sem_codigo_e_entregues(fabrica_pedido):
@@ -124,3 +119,19 @@ def test_provedor_recebe_o_momento_do_ultimo_evento_interno(fabrica_pedido):
     )
     assert referencia.tzinfo is not None
     assert referencia.replace(tzinfo=None) == ultimo_interno.replace(tzinfo=None)
+
+def test_etapa_mais_avancada_vale_mesmo_se_o_ultimo_evento_for_anterior(fabrica_pedido):
+    pedido = fabrica_pedido(codigo=CODIGO)
+    provedor = ProvedorFalso(
+        {
+            CODIGO: [
+                evento(0, Status.POSTADO),
+                evento(30, Status.SAIU_ENTREGA),
+                evento(60, Status.EM_TRANSITO),
+            ]
+        }
+    )
+
+    atualizar_pedido(pedido, provedor)
+
+    assert pedido.status == Status.SAIU_ENTREGA
