@@ -58,9 +58,9 @@ def atualizar_pedido(pedido, provedor):
         novos += 1
 
     if eventos:
-        ultimo = max(eventos, key=lambda e: _como_utc_ingenuo(e.ocorrido_em))
-        if ORDEM_STATUS.index(ultimo.status) > ORDEM_STATUS.index(pedido.status):
-            pedido.status = ultimo.status
+        mais_avancado = max(eventos, key=lambda e: ORDEM_STATUS.index(e.status))
+        if ORDEM_STATUS.index(mais_avancado.status) > ORDEM_STATUS.index(pedido.status):
+            pedido.status = mais_avancado.status
 
     return novos
 

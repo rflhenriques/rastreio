@@ -30,3 +30,11 @@ class TestConfig(Config):
     SECRET_KEY = "chave-de-teste"
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     WTF_CSRF_ENABLED = False
+
+    # Os testes nunca podem usar credenciais reais nem chamar os Correios
+    PROVEDOR_RASTREIO = "simulado"
+    CORREIOS_AMBIENTE = "homologacao"
+    CORREIOS_CHAVE_ACESSO = None
+    CORREIOS_USUARIO = None
+    CORREIOS_CODIGO_ACESSO = None
+    CORREIOS_CARTAO_POSTAGEM = None

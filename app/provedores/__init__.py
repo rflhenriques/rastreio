@@ -1,8 +1,10 @@
 from app.provedores.base import ErroProvedor, EventoRastreio, ProvedorRastreio
+from app.provedores.correios import ProvedorCorreios
 from app.provedores.simulado import ProvedorSimulado
 
 PROVEDORES = {
     "simulado": ProvedorSimulado,
+    "correios": ProvedorCorreios,
 }
 
 
