@@ -113,3 +113,22 @@ def test_carregar_usuario_flask_login(app):  # <-- Injeta o app aqui
         
         # Testa se retorna None para ID inexistente
         assert carregar_usuario(9999) is None
+
+def test_historico_mostra_os_eventos_dos_correios_acima_dos_internos(fabrica_pedido):
+    pedido = fabrica_pedido()  # nasce com "Contrato fechado", com a data de agora
+    antigo = datetime(2020, 1, 1, 12, 0, tzinfo=timezone.utc)
+    pedido.eventos.append(
+        Evento(origem=Origem.CORREIOS, descricao="Objeto postado", ocorrido_em=antigo)
+    )
+    pedido.eventos.append(
+        Evento(
+            origem=Origem.CORREIOS,
+            descricao="Em transferência",
+            ocorrido_em=antigo + timedelta(hours=1),
+        )
+    )
+    db.session.commit()
+
+    descricoes = [e.descricao for e in pedido.historico]
+
+    assert descricoes == ["Em transferência", "Objeto postado", "Contrato fechado"]

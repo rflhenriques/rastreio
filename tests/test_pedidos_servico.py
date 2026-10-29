@@ -106,3 +106,15 @@ def test_codigo_e_recusado_em_pedido_entregue(fabrica_pedido):
 
     with pytest.raises(ErroDeRegra, match="entregue"):
         cadastrar_codigo(pedido, "AA000000001BR")
+
+def test_historico_mantem_os_eventos_internos_do_mais_novo_para_o_mais_antigo(
+    fabrica_pedido,
+):
+    pedido = fabrica_pedido()
+    avancar_etapa(pedido, "RECEBIDO")
+    avancar_etapa(pedido, "EM_PREPARACAO")
+    db.session.commit()
+
+    descricoes = [e.descricao for e in pedido.historico]
+
+    assert descricoes == ["Pronto para postagem", "Em preparação", "Contrato fechado"]

@@ -128,3 +128,17 @@ def test_montar_etapas(fabrica_pedido, status, feitas, atuais, pendentes):
     assert estados.count("feita") == feitas
     assert estados.count("atual") == atuais
     assert estados.count("pendente") == pendentes
+
+def test_historico_publico_coloca_os_correios_acima_dos_eventos_internos(
+    client, fabrica_pedido
+):
+    pedido = fabrica_pedido()
+    pedido.eventos.append(
+        Evento(origem=Origem.CORREIOS, descricao="Evento dos Correios XYZ", ocorrido_em=BASE)
+    )
+    db.session.commit()
+
+    html = pagina(abrir(client, pedido))
+    historico = html.split("<h2>Histórico</h2>")[1]
+
+    assert historico.index("Evento dos Correios XYZ") < historico.index("Contrato fechado")

@@ -132,9 +132,14 @@ class Pedido(db.Model):
 
     @property
     def historico(self):
+        """Do mais recente ao mais antigo, com os eventos dos Correios acima dos internos."""
         return sorted(
             self.eventos,
-            key=lambda evento: (como_utc(evento.ocorrido_em), evento.id or 0),
+            key=lambda evento: (
+                evento.origem == Origem.CORREIOS,
+                como_utc(evento.ocorrido_em),
+                evento.id or 0,
+            ),
             reverse=True,
         )
 
