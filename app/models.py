@@ -1,13 +1,14 @@
 import enum
 import secrets
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from flask_login import UserMixin
-from sqlalchemy import DateTime, Enum, ForeignKey, String, UniqueConstraint
+from sqlalchemy import Date, DateTime, Enum, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.extensions import db, login_manager
+from app.filtros import FUSO_BRASILIA
 
 
 class TipoEnvio(enum.Enum):
@@ -101,6 +102,7 @@ class Pedido(db.Model):
     status: Mapped[Status] = mapped_column(
         Enum(Status, native_enum=False), default=Status.RECEBIDO, index=True
     )
+    previsao_entrega: Mapped[date | None] = mapped_column(Date)
     criado_em: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=agora_utc
     )
@@ -129,6 +131,12 @@ class Pedido(db.Model):
     @property
     def entregue(self):
         return self.status == Status.ENTREGUE
+    
+    @property
+    def em_atraso(self):
+        if self.entregue or self.previsao_entrega is None:
+            return False
+        return self.previsao_entrega < datetime.now(FUSO_BRASILIA).date()
 
     @property
     def historico(self):
@@ -156,6 +164,7 @@ class Evento(db.Model):
     pedido_id: Mapped[int] = mapped_column(ForeignKey("pedidos.id"), index=True)
     origem: Mapped[Origem] = mapped_column(Enum(Origem, native_enum=False))
     descricao: Mapped[str] = mapped_column(String(255))
+    detalhe: Mapped[str | None] = mapped_column(String(500))
     local: Mapped[str | None] = mapped_column(String(150))
     ocorrido_em: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 

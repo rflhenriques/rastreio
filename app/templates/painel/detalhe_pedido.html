@@ -17,6 +17,8 @@
     <dd>{{ pedido.rotulo_tipo }}</dd>
     <dt>Código dos Correios</dt>
     <dd>{{ pedido.codigo_rastreio or "ainda não cadastrado" }}</dd>
+    <dt>Previsão de entrega</dt>
+    <dd>{{ pedido.previsao_entrega|data_curta }}</dd>
     <dt>Criado em</dt>
     <dd>{{ pedido.criado_em|data_br }}</dd>
   </dl>
@@ -82,6 +84,7 @@
       <li>
         <strong>{{ evento.descricao }}</strong>
         {% if evento.local %}<span>{{ evento.local }}</span>{% endif %}
+        {% if evento.detalhe %}<p class="detalhe">{{ evento.detalhe }}</p>{% endif %}
         <small>{{ evento.ocorrido_em|data_br }} · {{ evento.origem.value }}</small>
       </li>
       {% endfor %}

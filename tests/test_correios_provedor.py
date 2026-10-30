@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 import pytest
 
@@ -8,6 +8,7 @@ from app.provedores import ErroProvedor, obter_provedor
 from app.provedores.correios import (
     ProvedorCorreios,
     classificar,
+    extrair_previsao,
     nome_proprio,
     traduzir_resposta,
 )
@@ -193,3 +194,43 @@ def test_sem_credenciais_o_erro_aparece_na_consulta(app):
 
     with pytest.raises(ErroProvedor, match="Faltam no .env"):
         provedor.buscar_eventos("XX000000000BR", None)
+
+
+def test_detalhe_do_evento_e_traduzido_e_vazio_vira_none():
+    dados = resposta(
+        bruto(
+            "OEC",
+            "Objeto saiu para entrega ao destinatário",
+            "2026-10-24T07:24:24",
+            detalhe="É preciso ter alguém no endereço",
+        ),
+        bruto("PO", "Objeto postado", "2026-10-14T11:14:06", detalhe="   "),
+        bruto("RO", "Objeto em transferência", "2026-10-14T17:25:23"),
+    )
+    eventos = traduzir_resposta(dados)
+    assert [e.detalhe for e in eventos] == ["É preciso ter alguém no endereço", None, None]
+
+
+@pytest.mark.parametrize(
+    "dados, esperado",
+    [
+        ({"objetos": [{"dtPrevista": "2026-10-20T23:59:59"}]}, date(2026, 10, 20)),
+        ({"objetos": [{}]}, None),
+        ({"objetos": [{"dtPrevista": "lixo"}]}, None),
+        ({"objetos": []}, None),
+        (None, None),
+    ],
+)
+def test_extrair_previsao(dados, esperado):
+    assert extrair_previsao(dados) == esperado
+
+
+def test_provedor_devolve_eventos_e_previsao():
+    dados = resposta(bruto("PO", "Objeto postado", "2026-10-14T11:14:06"))
+    dados["objetos"][0]["dtPrevista"] = "2026-10-20T23:59:59"
+    provedor = ProvedorCorreios(cliente=ClienteFalso(dados))
+    rastreio = provedor.consultar("XX000000000BR", None)
+
+    assert rastreio.previsao_entrega == date(2026, 10, 20)
+    assert len(rastreio.eventos) == 1
+    assert provedor.buscar_eventos("XX000000000BR", None) == rastreio.eventos

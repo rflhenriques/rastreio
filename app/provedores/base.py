@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 
 from app.models import Status
 
@@ -11,6 +11,13 @@ class EventoRastreio:
     ocorrido_em: datetime
     status: Status
     local: str | None = None
+    detalhe: str | None = None
+
+
+@dataclass(frozen=True)
+class Rastreio:
+    eventos: list[EventoRastreio]
+    previsao_entrega: date | None = None
 
 
 class ErroProvedor(Exception):
@@ -26,3 +33,11 @@ class ProvedorRastreio(ABC):
         para postagem. Provedores reais podem ignorá-lo; o simulado o usa para
         gerar eventos coerentes com o histórico interno.
         """
+
+    def consultar(self, codigo: str, referencia: datetime) -> Rastreio:
+        """Devolve os eventos e, se o provedor souber, a previsão de entrega.
+
+        A versão padrão só repassa os eventos. Provedores que trazem a previsão
+        (como o dos Correios) sobrescrevem este método.
+        """
+        return Rastreio(eventos=self.buscar_eventos(codigo, referencia))

@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from flask import current_app
 
 from app.models import Status
-from app.provedores.base import ErroProvedor, EventoRastreio, ProvedorRastreio
+from app.provedores.base import ErroProvedor, EventoRastreio, ProvedorRastreio, Rastreio
 from app.provedores.correios_cliente import FUSO_BRASILIA, criar_cliente_correios
 
 log = logging.getLogger(__name__)
@@ -94,15 +94,27 @@ def traduzir_resposta(dados):
                 "Código de evento dos Correios sem mapeamento: %s (%s)", codigo, descricao
             )
 
+        detalhe = (bruto.get("detalhe") or "").strip() or None
         eventos.append(
             EventoRastreio(
                 descricao=descricao,
                 ocorrido_em=momento,
                 status=classificar(codigo, descricao),
                 local=_local(bruto),
+                detalhe=detalhe,
             )
         )
     return eventos
+
+
+def extrair_previsao(dados):
+    objetos = dados.get("objetos") if isinstance(dados, dict) else None
+    if not objetos or not isinstance(objetos[0], dict):
+        return None
+    try:
+        return datetime.fromisoformat(objetos[0].get("dtPrevista")).date()
+    except (TypeError, ValueError):
+        return None
 
 
 class ProvedorCorreios(ProvedorRastreio):
@@ -114,6 +126,12 @@ class ProvedorCorreios(ProvedorRastreio):
             self._cliente = criar_cliente_correios(current_app.config)
         return self._cliente
 
-    def buscar_eventos(self, codigo, referencia):
+    def consultar(self, codigo, referencia):
         dados = self._cliente_correios().consultar_objeto(codigo)
-        return traduzir_resposta(dados)
+        return Rastreio(
+            eventos=traduzir_resposta(dados),
+            previsao_entrega=extrair_previsao(dados),
+        )
+
+    def buscar_eventos(self, codigo, referencia):
+        return self.consultar(codigo, referencia).eventos

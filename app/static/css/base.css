@@ -406,3 +406,9 @@ input:disabled {
 .historico small {
     color: var(--cor-texto-suave);
 }
+
+.historico .detalhe {
+    margin: 0.1rem 0 0;
+    color: var(--cor-texto-suave);
+    font-size: 0.9rem;
+}

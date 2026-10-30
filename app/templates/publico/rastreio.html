@@ -11,6 +11,14 @@
   {% if ultimo %}
     <p class="suave">Última atualização: {{ ultimo.ocorrido_em|data_br }}</p>
   {% endif %}
+  
+  {% if pedido.previsao_entrega and not pedido.entregue %}
+    <p class="suave">
+      Previsão de entrega: <strong>{{ pedido.previsao_entrega|data_curta }}</strong>
+      {% if pedido.em_atraso %}· prazo original ultrapassado{% endif %}
+    </p>
+  {% endif %}
+  
   {% if pedido.codigo_rastreio %}
     <p class="suave">Código de rastreio dos Correios: <strong>{{ pedido.codigo_rastreio }}</strong></p>
   {% endif %}
@@ -36,6 +44,7 @@
       <li>
         <strong>{{ evento.descricao }}</strong>
         {% if evento.local %}<span>{{ evento.local }}</span>{% endif %}
+        {% if evento.detalhe %}<p class="detalhe">{{ evento.detalhe }}</p>{% endif %}
         <small>{{ evento.ocorrido_em|data_br }}</small>
       </li>
       {% endfor %}

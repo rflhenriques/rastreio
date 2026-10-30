@@ -31,9 +31,8 @@ def _momento_referencia(pedido):
 
 
 def atualizar_pedido(pedido, provedor):
-    eventos = provedor.buscar_eventos(
-        pedido.codigo_rastreio, _momento_referencia(pedido)
-    )
+    rastreio = provedor.consultar(pedido.codigo_rastreio, _momento_referencia(pedido))
+    eventos = rastreio.eventos
 
     ja_gravados = {
         (_como_utc_ingenuo(e.ocorrido_em), e.descricao)
@@ -51,6 +50,7 @@ def atualizar_pedido(pedido, provedor):
                 origem=Origem.CORREIOS,
                 descricao=evento.descricao,
                 local=evento.local,
+                detalhe=evento.detalhe,
                 ocorrido_em=evento.ocorrido_em,
             )
         )
@@ -61,6 +61,9 @@ def atualizar_pedido(pedido, provedor):
         mais_avancado = max(eventos, key=lambda e: ORDEM_STATUS.index(e.status))
         if ORDEM_STATUS.index(mais_avancado.status) > ORDEM_STATUS.index(pedido.status):
             pedido.status = mais_avancado.status
+
+    if rastreio.previsao_entrega:
+        pedido.previsao_entrega = rastreio.previsao_entrega
 
     return novos
 

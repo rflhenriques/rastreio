@@ -1,8 +1,8 @@
-"""tabelas iniciais
+"""banco inicial
 
-Revision ID: 7bfb5c1c6395
+Revision ID: 3f8b08618e1a
 Revises: 
-Create Date: 2026-10-15 20:54:18.835447
+Create Date: 2026-10-30 12:31:00.340951
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7bfb5c1c6395'
+revision = '3f8b08618e1a'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -25,6 +25,7 @@ def upgrade():
     sa.Column('nome_cliente', sa.String(length=150), nullable=False),
     sa.Column('codigo_rastreio', sa.String(length=20), nullable=True),
     sa.Column('status', sa.Enum('RECEBIDO', 'EM_PREPARACAO', 'PRONTO_POSTAGEM', 'POSTADO', 'EM_TRANSITO', 'SAIU_ENTREGA', 'ENTREGUE', name='status', native_enum=False), nullable=False),
+    sa.Column('previsao_entrega', sa.Date(), nullable=True),
     sa.Column('criado_em', sa.DateTime(timezone=True), nullable=False),
     sa.Column('atualizado_em', sa.DateTime(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -46,6 +47,7 @@ def upgrade():
     sa.Column('pedido_id', sa.Integer(), nullable=False),
     sa.Column('origem', sa.Enum('INTERNA', 'CORREIOS', name='origem', native_enum=False), nullable=False),
     sa.Column('descricao', sa.String(length=255), nullable=False),
+    sa.Column('detalhe', sa.String(length=500), nullable=True),
     sa.Column('local', sa.String(length=150), nullable=True),
     sa.Column('ocorrido_em', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['pedido_id'], ['pedidos.id'], ),

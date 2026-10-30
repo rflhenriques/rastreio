@@ -1,8 +1,10 @@
+from datetime import date
 from app.extensions import db
 from app.models import Origem, Status
 from app.provedores import ErroProvedor
+from app.provedores.base import EventoRastreio, Rastreio
 from app.servicos.atualizador import atualizar_pedido, atualizar_todos
-from falsos import ProvedorFalso, evento
+from falsos import BASE, ProvedorFalso, evento
 
 CODIGO = "AA000000001BR"
 OUTRO = "BB000000002BR"
@@ -135,3 +137,40 @@ def test_etapa_mais_avancada_vale_mesmo_se_o_ultimo_evento_for_anterior(fabrica_
     atualizar_pedido(pedido, provedor)
 
     assert pedido.status == Status.SAIU_ENTREGA
+
+
+class ProvedorComPrevisao(ProvedorFalso):
+    def __init__(self, respostas, previsao):
+        super().__init__(respostas)
+        self.previsao = previsao
+
+    def consultar(self, codigo, referencia):
+        rastreio = super().consultar(codigo, referencia)
+        return Rastreio(eventos=rastreio.eventos, previsao_entrega=self.previsao)
+
+
+def test_grava_o_detalhe_do_evento(fabrica_pedido):
+    pedido = fabrica_pedido(codigo=CODIGO)
+    com_detalhe = EventoRastreio(
+        descricao="Objeto aguardando retirada",
+        ocorrido_em=BASE,
+        status=Status.EM_TRANSITO,
+        detalhe="Leve um documento",
+    )
+    atualizar_pedido(pedido, ProvedorFalso({CODIGO: [com_detalhe]}))
+    assert [e.detalhe for e in eventos_dos_correios(pedido)] == ["Leve um documento"]
+
+
+def test_grava_a_previsao_de_entrega(fabrica_pedido):
+    pedido = fabrica_pedido(codigo=CODIGO)
+    provedor = ProvedorComPrevisao({CODIGO: [evento(0, Status.POSTADO)]}, date(2026, 10, 20))
+    atualizar_pedido(pedido, provedor)
+    assert pedido.previsao_entrega == date(2026, 10, 20)
+
+
+def test_previsao_nao_e_apagada_quando_o_provedor_nao_informa(fabrica_pedido):
+    pedido = fabrica_pedido(codigo=CODIGO)
+    atualizar_pedido(pedido, ProvedorComPrevisao({CODIGO: []}, date(2026, 10, 20)))
+    db.session.commit()
+    atualizar_pedido(pedido, ProvedorFalso({CODIGO: []}))
+    assert pedido.previsao_entrega == date(2026, 10, 20)
